@@ -1,16 +1,22 @@
-# Etap 1 — build stage
-FROM node:alpine AS build
+# Użyj obrazu bazowego Node.js
+FROM node:16-alpine
+
+# Ustaw katalog roboczy
 WORKDIR /app
+
+# Skopiuj pliki aplikacji
 COPY package.json .
-RUN npm install
 COPY index.js .
 
-# Etap 2 — finalny, lekki obraz
-FROM alpine
-WORKDIR /app
+# Zainstaluj zależności
+RUN npm install
+
+# Ustaw zmienną środowiskową VERSION (opcjonalne)
 ARG VERSION
 ENV VERSION=${VERSION}
-RUN apk add --no-cache nodejs
-COPY --from=build /app /app
+
+# Ekspozycja portu
 EXPOSE 8080
+
+# Uruchom aplikację
 CMD ["node", "index.js"]
